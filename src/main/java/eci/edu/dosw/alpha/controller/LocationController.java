@@ -6,6 +6,8 @@ import eci.edu.dosw.alpha.service.LocationService;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class LocationController {
@@ -23,4 +25,10 @@ public class LocationController {
         // guardar y retornar
         return locationService.updateLocation(message);
     }
+
+    @GetMapping("/{userId}")
+    public LocationMessage getLocation(@PathVariable String userId) {
+        return locationService.getLocation(userId);
+    }
+
 }
