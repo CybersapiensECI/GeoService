@@ -6,61 +6,39 @@ import java.util.Map;
 
 public enum CampusZone {
 
-    // Edificios
-    A,
-    B,
-    C,
-    D,
-    E,
-    F,
-    G,
-    H,
-    I,
+    // Bloques académicos
+    BLOQUE_A,
+    BLOQUE_B,
+    BLOQUE_C,
+    BLOQUE_D,
+    BLOQUE_E,
+    BLOQUE_F,
 
-    // Puntos de interés
-    CAFE_PLANET,
-    DIALIMENTOS,
-    NATIVOS,
-    HARVIES,
-    COLISEO,
+    // Instalaciones
+    BIBLIOTECA,
+    CAFETERIA,
+    CANCHA,
+    AUDITORIO,
 
-    // Entradas
-    ENTRADA_PEATONAL,
-    ENTRADA_VEHICULAR,
-
-    // Parqueaderos
-    PARQUEADERO_NORTE,
-    PARQUEADERO_SUR;
+    // Accesos y servicios
+    ENTRADA_PRINCIPAL,
+    PARQUEADERO;
 
     private static final Map<CampusZone, List<CampusZone>> NEARBY = new EnumMap<>(CampusZone.class);
 
     static {
-
-        // Edificios
-        NEARBY.put(A, List.of(B, C, ENTRADA_VEHICULAR));
-        NEARBY.put(B, List.of(A, D, G, ENTRADA_PEATONAL));
-        NEARBY.put(C, List.of(A, E, NATIVOS));
-        NEARBY.put(D, List.of(B, F, DIALIMENTOS, CAFE_PLANET));
-        NEARBY.put(E, List.of(C, I, NATIVOS));
-        NEARBY.put(F, List.of(D, G, ENTRADA_PEATONAL));
-        NEARBY.put(G, List.of(F, B, PARQUEADERO_NORTE));
-        NEARBY.put(H, List.of(I, PARQUEADERO_SUR));
-        NEARBY.put(I, List.of(H, E));
-
-        // Puntos de interés
-        NEARBY.put(CAFE_PLANET, List.of(D, DIALIMENTOS));
-        NEARBY.put(DIALIMENTOS, List.of(D, CAFE_PLANET));
-        NEARBY.put(NATIVOS, List.of(C, E));
-        NEARBY.put(HARVIES, List.of(COLISEO));
-        NEARBY.put(COLISEO, List.of(HARVIES));
-
-        // Entradas
-        NEARBY.put(ENTRADA_PEATONAL, List.of(B, F, PARQUEADERO_NORTE));
-        NEARBY.put(ENTRADA_VEHICULAR, List.of(A, C, PARQUEADERO_SUR));
-
-        // Parqueaderos
-        NEARBY.put(PARQUEADERO_NORTE, List.of(G, ENTRADA_PEATONAL));
-        NEARBY.put(PARQUEADERO_SUR, List.of(H, ENTRADA_VEHICULAR));
+        NEARBY.put(BLOQUE_A, List.of(BLOQUE_B, CAFETERIA));
+        NEARBY.put(BLOQUE_B, List.of(BLOQUE_A, BLOQUE_C));
+        NEARBY.put(BLOQUE_C, List.of(BLOQUE_B, BLOQUE_D));
+        NEARBY.put(BLOQUE_D, List.of(BLOQUE_C, BLOQUE_E));
+        NEARBY.put(BLOQUE_E, List.of(BLOQUE_D, BLOQUE_F));
+        NEARBY.put(BLOQUE_F, List.of(BLOQUE_E, CANCHA));
+        NEARBY.put(BIBLIOTECA, List.of(BLOQUE_A, ENTRADA_PRINCIPAL));
+        NEARBY.put(CAFETERIA, List.of(BLOQUE_A, BLOQUE_B));
+        NEARBY.put(CANCHA, List.of(BLOQUE_F, AUDITORIO));
+        NEARBY.put(AUDITORIO, List.of(CANCHA, ENTRADA_PRINCIPAL));
+        NEARBY.put(ENTRADA_PRINCIPAL, List.of(BLOQUE_A, PARQUEADERO));
+        NEARBY.put(PARQUEADERO, List.of(ENTRADA_PRINCIPAL));
     }
 
     public List<CampusZone> getNearby() {
