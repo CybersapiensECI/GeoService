@@ -172,6 +172,8 @@ jobs:
         uses: azure/CLI@v2
         with:
           inlineScript: |
+            IMAGE_TAG=$(echo "${{ github.sha }}" | cut -c1-7)
+            IMAGE_LOWER=$(echo "${{ env.IMAGE_NAME }}" | tr '[:upper:]' '[:lower:]')
             az containerapp update \
               -g alpha-rf -n alpha-geoservice \
-              --image ${{ env.IMAGE_NAME }}:${{ needs.build-and-push.outputs.image-tag }}
+              --image "${IMAGE_LOWER}:${IMAGE_TAG}"
