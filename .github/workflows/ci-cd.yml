@@ -143,3 +143,35 @@ jobs:
 
             # Limpieza de imágenes antiguas
             docker image prune -f
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # CD — Deploy a Azure Container Apps (solo main)
+  #
+  # Secret requerido en GitHub → Settings → Secrets and variables → Actions:
+  #   AZURE_CREDENTIALS   JSON de Service Principal (az ad sp create-for-rbac --sdk-auth)
+  #                       scoped al resource group alpha-rf
+  #
+  # Recurso: Container App "alpha-geoservice" (East US 2, resource group alpha-rf)
+  # sobre el environment "alpha-geoservice-env". Se actualiza al tag de imagen
+  # exacto (sha corto) publicado por el job build-and-push, no ":latest",
+  # para que cada push a main dispare una revisión nueva y verificable.
+  # ─────────────────────────────────────────────────────────────────────────────
+  deploy-azure:
+    name: Deploy to Azure Container Apps
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    environment: production
+
+    steps:
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Actualizar Container App con nueva imagen
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            az containerapp update \
+              -g alpha-rf -n alpha-geoservice \
+              --image ${{ env.IMAGE_NAME }}:${{ needs.build-and-push.outputs.image-tag }}
