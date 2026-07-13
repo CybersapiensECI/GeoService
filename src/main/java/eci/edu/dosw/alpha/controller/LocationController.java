@@ -35,6 +35,7 @@ public class LocationController {
     @Operation(summary = "Obtener última ubicación de un usuario")
     @ApiResponse(responseCode = "200", description = "Última ubicación registrada (null si no hay datos)")
     @GetMapping("/{userId}")
+    @org.springframework.web.bind.annotation.ResponseBody
     public LocationMessage getLocation(
             @Parameter(description = "ID del usuario") @PathVariable String userId) {
         return locationService.getLocation(userId);
