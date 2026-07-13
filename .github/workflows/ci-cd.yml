@@ -172,6 +172,7 @@ jobs:
         uses: azure/CLI@v2
         with:
           inlineScript: |
+            az extension add --name containerapp --upgrade --only-show-errors
             IMAGE_TAG=$(echo "${{ github.sha }}" | cut -c1-7)
             IMAGE_LOWER=$(echo "${{ env.IMAGE_NAME }}" | tr '[:upper:]' '[:lower:]')
             az containerapp update \
