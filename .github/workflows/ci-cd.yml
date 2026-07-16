@@ -175,10 +175,30 @@ jobs:
             az extension add --name containerapp --upgrade --only-show-errors
             IMAGE_TAG=$(echo "${{ github.sha }}" | cut -c1-7)
             IMAGE_LOWER=$(echo "${{ env.IMAGE_NAME }}" | tr '[:upper:]' '[:lower:]')
-            # --container-name explicito evita bug conocido de Azure CLI:
-            # "TypeError: object of type 'NoneType' has no len()" cuando
-            # template.containers vuelve null en la respuesta de la API.
-            az containerapp update \
-              -g alpha-rf -n alpha-geoservice \
-              --container-name alpha-geoservice \
-              --image "${IMAGE_LOWER}:${IMAGE_TAG}"
+
+            # El recurso alpha-geoservice quedo con properties.template.containers
+            # en null (nunca se completo su creacion). En ese estado, "az containerapp
+            # update" siempre crashea con "TypeError: 'NoneType' object is not iterable"
+            # porque intenta iterar los containers existentes para mergear. La salida
+            # es usar "create", que no hace merge y sobreescribe el recurso completo.
+            CONTAINERS_COUNT=$(az containerapp show -g alpha-rf -n alpha-geoservice \
+              --query "length(properties.template.containers || \`[]\`)" -o tsv 2>/dev/null || echo 0)
+
+            if [ "$CONTAINERS_COUNT" = "0" ]; then
+              echo "Container app sin containers definidos: recreando con az containerapp create"
+              az containerapp create \
+                -g alpha-rf -n alpha-geoservice \
+                --environment alpha-geoservice-env \
+                --image "${IMAGE_LOWER}:${IMAGE_TAG}" \
+                --target-port 8082 \
+                --ingress external \
+                --min-replicas 1 --max-replicas 1 \
+                --registry-server ghcr.io \
+                --registry-username "${{ github.actor }}" \
+                --registry-password "${{ secrets.GHCR_PAT }}"
+            else
+              az containerapp update \
+                -g alpha-rf -n alpha-geoservice \
+                --container-name alpha-geoservice \
+                --image "${IMAGE_LOWER}:${IMAGE_TAG}"
+            fi
