@@ -175,6 +175,10 @@ jobs:
             az extension add --name containerapp --upgrade --only-show-errors
             IMAGE_TAG=$(echo "${{ github.sha }}" | cut -c1-7)
             IMAGE_LOWER=$(echo "${{ env.IMAGE_NAME }}" | tr '[:upper:]' '[:lower:]')
+            # --container-name explicito evita bug conocido de Azure CLI:
+            # "TypeError: object of type 'NoneType' has no len()" cuando
+            # template.containers vuelve null en la respuesta de la API.
             az containerapp update \
               -g alpha-rf -n alpha-geoservice \
+              --container-name alpha-geoservice \
               --image "${IMAGE_LOWER}:${IMAGE_TAG}"
