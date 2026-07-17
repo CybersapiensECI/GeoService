@@ -36,7 +36,7 @@ class ZoneServiceTest {
     @Test
     void saveZone_geoDisabled_returnsNullZoneAndEmptyNearby() {
         ZoneRequest req = new ZoneRequest();
-        req.setCampusZone("CAFETERIA");
+        req.setCampusZone("CAFETERIA_REGIO");
         req.setGeoLocationEnabled(false);
 
         ZoneResponse res = service.saveZone("user2", req);
@@ -111,7 +111,7 @@ class ZoneServiceTest {
     @Test
     void getZone_savedButDisabled_E2_returnsNullZone() {
         ZoneRequest req = new ZoneRequest();
-        req.setCampusZone("BLOQUE_A");
+        req.setCampusZone("EDIFICIO_A");
         req.setGeoLocationEnabled(false);
         service.saveZone("userB", req);
 
@@ -124,8 +124,11 @@ class ZoneServiceTest {
     @Test
     void saveZone_allValidZones_doNotThrow() {
         String[] zones = {
-            "BLOQUE_A","BLOQUE_B","BLOQUE_C","BLOQUE_D","BLOQUE_E","BLOQUE_F",
-            "BIBLIOTECA","CAFETERIA","CANCHA","AUDITORIO","ENTRADA_PRINCIPAL","PARQUEADERO"
+            "EDIFICIO_A","EDIFICIO_B","EDIFICIO_C","EDIFICIO_D","EDIFICIO_E",
+            "EDIFICIO_F","EDIFICIO_G","EDIFICIO_H","EDIFICIO_I",
+            "CAFETERIA_REGIO","CAFETERIA_2","CAFETERIA_3","CAFETERIA_4",
+            "LAGO","REFLEXION",
+            "BIBLIOTECA","CANCHA","AUDITORIO","ENTRADA_PRINCIPAL","PARQUEADERO"
         };
         for (String z : zones) {
             ZoneRequest req = new ZoneRequest();
@@ -138,7 +141,7 @@ class ZoneServiceTest {
     @Test
     void saveZone_overwritesPreviousPreference() {
         ZoneRequest first = new ZoneRequest();
-        first.setCampusZone("BLOQUE_A");
+        first.setCampusZone("EDIFICIO_A");
         first.setGeoLocationEnabled(true);
         service.saveZone("userC", first);
 
@@ -153,11 +156,11 @@ class ZoneServiceTest {
     @Test
     void nearbyParches_bloqueA_containsExpected() {
         ZoneRequest req = new ZoneRequest();
-        req.setCampusZone("BLOQUE_A");
+        req.setCampusZone("EDIFICIO_A");
         req.setGeoLocationEnabled(true);
 
         ZoneResponse res = service.saveZone("u7", req);
 
-        assertThat(res.getNearbyParches()).containsExactlyInAnyOrder("BLOQUE_B", "CAFETERIA");
+        assertThat(res.getNearbyParches()).containsExactlyInAnyOrder("EDIFICIO_B", "CAFETERIA_REGIO");
     }
 }

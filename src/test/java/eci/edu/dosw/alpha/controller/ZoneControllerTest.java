@@ -41,7 +41,7 @@ class ZoneControllerTest {
         request = new ZoneRequest();
         request.setCampusZone("BIBLIOTECA");
         request.setGeoLocationEnabled(true);
-        response = new ZoneResponse("BIBLIOTECA", List.of("BLOQUE_A", "ENTRADA_PRINCIPAL"));
+        response = new ZoneResponse("BIBLIOTECA", List.of("EDIFICIO_A", "ENTRADA_PRINCIPAL"));
     }
 
     @Test
@@ -83,7 +83,7 @@ class ZoneControllerTest {
     void getCatalog_returnsAllZones() {
         ResponseEntity<List<String>> res = controller.getCatalog();
 
-        assertThat(res.getBody()).contains("BIBLIOTECA", "BLOQUE_A", "CAFETERIA");
+        assertThat(res.getBody()).contains("BIBLIOTECA", "EDIFICIO_A", "CAFETERIA_REGIO");
         assertThat(res.getStatusCode().value()).isEqualTo(200);
     }
 }

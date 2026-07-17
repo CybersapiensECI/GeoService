@@ -1,9 +1,11 @@
 package eci.edu.dosw.alpha.service;
 
+import eci.edu.dosw.alpha.model.GeoFenceZone;
 import eci.edu.dosw.alpha.model.LocationMessage;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -11,6 +13,18 @@ public class LocationService {
 
     // Última ubicación por usuario
     private final ConcurrentHashMap<String, LocationMessage> locations = new ConcurrentHashMap<>();
+
+    // Última geocerca (locationCode) en la que se detectó a cada usuario;
+    // evita re-notificar a Gamification en cada ping mientras sigue dentro.
+    private final ConcurrentHashMap<String, String> lastZoneByUser = new ConcurrentHashMap<>();
+
+    private final GeofenceService geofenceService;
+    private final GamificationActivityClient gamificationActivityClient;
+
+    public LocationService(GeofenceService geofenceService, GamificationActivityClient gamificationActivityClient) {
+        this.geofenceService = geofenceService;
+        this.gamificationActivityClient = gamificationActivityClient;
+    }
 
     /**
      * Actualiza la ubicación de un usuario
@@ -24,7 +38,29 @@ public class LocationService {
         }
 
         locations.put(message.getUserId(), message);
+        checkGeofenceEntry(message);
         return message;
+    }
+
+    /**
+     * Detecta si el usuario entró a una geocerca nueva (transición
+     * fuera→dentro o cambio de zona) y, si es así, notifica a
+     * GamificationService de forma asíncrona.
+     */
+    private void checkGeofenceEntry(LocationMessage message) {
+        String userId = message.getUserId();
+        Optional<GeoFenceZone> current = geofenceService.resolveZone(message.getLat(), message.getLng());
+
+        if (current.isEmpty()) {
+            lastZoneByUser.remove(userId);
+            return;
+        }
+
+        GeoFenceZone zone = current.get();
+        String previousZone = lastZoneByUser.put(userId, zone.locationCode());
+        if (!zone.locationCode().equals(previousZone)) {
+            gamificationActivityClient.notifyCheckin(userId, zone.activityType(), zone.locationCode());
+        }
     }
 
     /**
