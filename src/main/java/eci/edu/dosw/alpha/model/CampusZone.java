@@ -19,7 +19,16 @@ public enum CampusZone {
     EDIFICIO_I,
 
     // Cafeterías (4) — CAFETERIA_REGIO coincide con GamificationService.
-    // CAFETERIA_2/3/4 son códigos placeholder: pendiente nombre real + coordenadas.
+    // CAFETERIA_2/3/4 tienen coordenadas reales (no 0,0 ni duplicadas) pero
+    // código genérico sin nombre real todavía. Coincidencia encontrada por
+    // comparación de lat/lng contra Front_AlphaECI/lib/core/constants/campus_places.dart:
+    //   CAFETERIA_3 (4.783856, -74.045835) ≈ LEYENDA (4.7838, -74.0458) — casi exacto
+    //   CAFETERIA_4 (4.782363, -74.042994) ≈ HARVIES  (4.7823, -74.0430) — casi exacto
+    //   CAFETERIA_2 (4.783233, -74.044654) — no coincide con ningún lugar conocido
+    // NO renombrado: si algún UserMonaProgress.visitedLocations ya tiene
+    // "CAFETERIA_3"/"CAFETERIA_4" guardado, renombrar el código rompe esa
+    // referencia sin una migración. Pendiente confirmar con el equipo/dueño
+    // del campus si la coincidencia es real antes de renombrar.
     CAFETERIA_REGIO,
     CAFETERIA_2,
     CAFETERIA_3,
