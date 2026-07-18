@@ -36,7 +36,12 @@ public class GeofenceCatalog {
             zone(CAFETERIA_3, 4.783855976183257, -74.04583457286611, 15, CAFETERIA_CHECKIN),
             zone(CAFETERIA_4, 4.7823632440346735, -74.04299435757378, 15, CAFETERIA_CHECKIN),
             zone(LAGO, 4.783042637971193, -74.04428261122634, 30, CAMPUS_ZONE_CHECKIN),
-            zone(REFLEXION, 4.78303796045251, -74.04448109469203, 15, CAMPUS_ZONE_CHECKIN)
+            zone(REFLEXION, 4.78303796045251, -74.04448109469203, 15, CAMPUS_ZONE_CHECKIN),
+            // Todo el campus (centro geometrico de las zonas anteriores,
+            // radio que cubre los 9 edificios y las cafeterias): "estar en
+            // la universidad" tambien cuenta como actividad, aunque el
+            // usuario no pise ninguna zona puntual.
+            zone(UNIVERSIDAD, 4.78285, -74.0442, 250, CAMPUS_ZONE_CHECKIN)
     );
 
     private static GeoFenceZone zone(CampusZone zone, double lat, double lng, double radiusMeters, String activityType) {

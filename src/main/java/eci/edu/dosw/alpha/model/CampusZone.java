@@ -29,6 +29,11 @@ public enum CampusZone {
     LAGO,
     REFLEXION,
 
+    // Geocerca de todo el campus: registra presencia en la universidad en
+    // general cuando el usuario no esta dentro de ninguna zona puntual
+    // (resolveZone prefiere siempre la zona de centro mas cercano).
+    UNIVERSIDAD,
+
     // Instalaciones sin mona asociada (solo catálogo de Parches, RF29)
     BIBLIOTECA,
     CANCHA,
@@ -54,6 +59,7 @@ public enum CampusZone {
         NEARBY.put(CAFETERIA_4, List.of(EDIFICIO_G, EDIFICIO_H));
         NEARBY.put(LAGO, List.of(REFLEXION));
         NEARBY.put(REFLEXION, List.of(LAGO));
+        NEARBY.put(UNIVERSIDAD, List.of(ENTRADA_PRINCIPAL));
         NEARBY.put(BIBLIOTECA, List.of(EDIFICIO_A, ENTRADA_PRINCIPAL));
         NEARBY.put(CANCHA, List.of(EDIFICIO_I, AUDITORIO));
         NEARBY.put(AUDITORIO, List.of(CANCHA, ENTRADA_PRINCIPAL));
